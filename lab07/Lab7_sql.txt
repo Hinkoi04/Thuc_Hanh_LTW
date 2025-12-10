@@ -1,0 +1,74 @@
+ALTER TABLE `sach` ADD CONSTRAINT `FK_sach_loai` FOREIGN KEY (`maloai`) REFERENCES `loai`(`maloai`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+//create hoadon
+CREATE TABLE hoadon(
+	mahd int(11) PRIMARY KEY,
+    email varchar(50),
+    ngayhd datetime,
+    tennguoinhan varchar(50),
+    diachinguoinhan varchar(80),
+    ngaynhan date,
+    dienthoainguoinhan varchar(11),
+    trangthai tinyint(4)
+);
+
+//khachhang
+CREATE TABLE khachhang(
+    email varchar(50) PRIMARY KEY,
+    matkhau varchar(32),
+    tenkh varchar(50),
+    diachi varchar(100),
+    dienthoai varchar(11)
+);
+
+4.4
+ALTER TABLE hoadon MODIFY trangthai tinyint(4) NOT NULL DEFAULT 0;
+
+4.5
+CREATE VIEW top_10_gia
+AS
+(
+	SELECT masach, tensach, gia
+    FROM sach
+    ORDER BY gia DESC
+    LIMIT 10
+)
+
+4.6
+DELIMITER //
+CREATE PROCEDURE liet_ke_sach(ma varchar(10))
+BEGIN
+	SELECT masach, tensach
+    FROM sach
+    WHERE maloai = ma;
+END//
+DELIMITER ;
+
+
+5.1
+SELECT masach, tensach, sach.maloai, tenloai
+from sach JOIN loai on loai.maloai = sach.maloai
+ORDER BY tenloai, masach
+
+
+5.2
+DELIMITER //
+CREATE PROCEDURE updateGia (IN ma varchar(15), IN giaNew float)
+BEGIN
+	UPDATE sach SET gia = giaNew WHERE masach = ma;
+END//
+DELIMITER ;
+
+5.3
+SELECT sach.masach, tensach, SUM(soluong) as TongBanRa
+FROM chitiethd JOIN sach on sach.masach = chitiethd.masach
+GROUP BY sach.masach, tensach
+ORDER BY SUM(soluong) DESC
+LIMIT 1
+
+5.4
+SELECT sach.masach, tensach, SUM(soluong) as TongBanRa
+FROM chitiethd JOIN sach on sach.masach = chitiethd.masach
+GROUP BY sach.masach, tensach
+ORDER BY SUM(soluong) DESC
+LIMIT 10
